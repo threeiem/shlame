@@ -1,0 +1,10 @@
+#!/bin/bash 
+
+LOG_HTTPD_ACCESS="/var/log/httpd/access_log"
+LOG_HTTPD_ERROR="/var/log/httpd/error_log"
+
+echo -e "${Blue}Starting logging..."
+tail --pid=$$ -f $LOG_HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
+tail --pid=$$ -f $LOG_HTTPD_ACCESS | awk '/^/ { print "\033[32m" $0 "\033[39m" }' 
+echo -e "${Blue}Logging complete."
+
