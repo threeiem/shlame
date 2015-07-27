@@ -1,0 +1,41 @@
+#!/bin/bash
+################################################################################
+#
+# ArghVM
+#
+# This is an installer for RVM. There are some special things that need to 
+# happen on an RVM install at NCEI so this script captures those. This script
+# can also remove RVM installs as well and the extranious files it places on 
+# the file system. Use the delete flag with caution.
+#
+# @author Phil Cogbill <phil.cogbill@noaa.gov>
+#
+################################################################################
+
+# Locate Variables
+RVM_KEY="409B6B1796C275462A1703113804BB82D39DC0E3"
+RVN_KEY_SERVER="hkp://keys.gnupg.net:80"
+PGP_HOME="${HOME}/.gnupg"
+
+case "$1" in
+
+  "delete")
+    rm -rf ~/.gnupg ~/.rvm ~/.mkshrc ~/.zshrc ~/.zlogin ~/.profile
+    ;;
+
+  *)
+
+  echo "Installing ${Red}RVM...{$Reset}"
+
+  # Force GPG version 2 and use SSL to make it throught the firewall. 
+  command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
+
+  # Install RVM and check the certificate
+  command curl -sSL https://get.rvm.io | bash -s stable
+
+  rm -rf ~/.mkshrc ~/.zshrc ~/.zlogin ~/.profile
+  ;;
+
+esac
+
+# vim:ft=sh
