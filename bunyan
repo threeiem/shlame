@@ -1,10 +1,33 @@
 #!/bin/bash 
+# Oct  7 08:26 base-ssl_access_ssl.log
+# Sep 24 19:44 base-ssl_error_ssl.log
+# Oct  7 08:26 base_access.log
+# Oct  6 11:36 base_error.log
+# Sep 24 19:37 error_log
+# Mar 31  2015 ssl_access_log
+# Mar 31  2015 ssl_access_log.json
+# Mar 27  2015 ssl_error_log
 
-LOG_HTTPD_ACCESS="/var/log/httpd/access_log"
-LOG_HTTPD_ERROR="/var/log/httpd/error_log"
+HTTPD_ACCESS="/var/log/httpd/access_log"
+BASE_HTTPD_ACCESS="/var/log/httpd/base_access.log"
+BASE_SSL_HTTPD_ACCESS="/var/log/httpd/base_access.log"
+HTTPD_ERROR="/var/log/httpd/error_log"
+BASE_HTTPD_ERROR="/var/log/httpd/base_error.log"
+BASE_SSL_HTTPD_ERROR="/var/log/httpd/base_error.log"
 
-echo -e "${Blue}Starting logging..."
-tail --pid=$$ -f $LOG_HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
-tail --pid=$$ -f $LOG_HTTPD_ACCESS | awk '/^/ { print "\033[32m" $0 "\033[39m" }' 
+if [ $1 ]; then
+  echo -e "${Blue}Starting logging all..."
+  tail --pid=$$ -f $HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $BASE_HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $BASE_SSL_HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $HTTPD_ACCESS | awk '/^/ { print "\033[32m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $BASE_SSL_HTTPD_ACCESS | awk '/^/ { print "\033[32m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $BASE_HTTPD_ACCESS | awk '/^/ { print "\033[32m" $0 "\033[39m" }' 
+else
+  echo -e "${Blue}Starting error logging..."
+  tail --pid=$$ -f $HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $BASE_HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }' &
+  tail --pid=$$ -f $BASE_SSL_HTTPD_ERROR  | awk '/^/ { print "\033[31m" $0 "\033[39m" }'
+fi
+
 echo -e "${Blue}Logging complete."
-
