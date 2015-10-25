@@ -1,0 +1,75 @@
+#!/usr/bin/php
+<?php
+/**
+ * Composer Downloader
+ *
+ * Script so I don't have to remember how to get composer again.
+ */
+
+// System name
+
+// Get and install composer
+incurl('https://getcomposer.org/installer');
+
+function incurl($install_url, $md5_url = NULL) {
+
+  $label = 'inurl';
+
+  // Temporary files.
+  $tmp = (array) tempt($label);
+
+  if (gurl($install_url, $tmp[$label]['handle']) === TRUE) {
+  
+    // Execute the PHP we downloaded. (Look Ma no hands!)
+    #include_once($tmp[$label]['file']);
+    unlink($tmp[$label]['file']);
+    exit; 
+  
+  } else {
+  
+    if (file_exists($tmp[$label]['file']) == TRUE) {
+      unlink($tmp[$label]['file']);
+    }
+  
+    exit;
+  
+  }
+}
+
+
+// Get a URL
+function gurl($url, $output_handle) {
+
+  $curl_handle = curl_init($url);
+  curl_setopt($curl_handle, CURLOPT_FILE, $output_handle);
+  curl_setopt($curl_handle, CURLOPT_HEADER, 0);
+
+  $load_result = curl_exec($curl_handle);
+
+  if (($load_result == FALSE) || (curl_close($curl_handle) === FALSE)) {
+
+    $failboat = 'FAIL: CURL has no data or an abnormal EOF';
+    echo $failboat;
+    return FALSE;
+
+  } else {
+
+    $file_close = (bool) fclose($output_handle);
+    return TRUE;
+
+  }
+}
+
+// Temporary storage for the installer.
+function tempt($label) {
+
+  $tmp = array();
+
+  $tmp[$label]['name'] = $label.'-'.md5(microtime()).'.tmp.';
+  $tmp[$label]['file'] = tempnam(sys_get_temp_dir(), $tmp[$label]['name']);
+  $tmp[$label]['handle'] = fopen($tmp[$label]['file'], 'w+');
+
+  return $tmp;
+}
+// vim: syntax=php
+?>
