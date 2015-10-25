@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [[ $1 ]]; then
+  chgrp -R nidis-dev $1
+  chmod -R g+rw $1
+  find $1 -type d -exec chmod g+s {} \;
+  exit
+else
+  echo "$1 not found."
+  exit 3
+fi
